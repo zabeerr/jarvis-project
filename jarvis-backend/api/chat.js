@@ -1,4 +1,4 @@
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
 const SYSTEM =
   "You are JARVIS, a smart personal assistant for Zabeer. " +
@@ -43,9 +43,8 @@ export default async function handler(req, res) {
           systemInstruction: { parts: [{ text: SYSTEM }] },
           contents,
           generationConfig: {
-            maxOutputTokens: 300,
-            temperature: 0.7,
-            thinkingConfig: { thinkingBudget: 0 },
+            maxOutputTokens: 400,
+            thinkingConfig: { thinkingLevel: "low" },
           },
         }),
       }
