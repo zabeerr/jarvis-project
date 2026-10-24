@@ -35,7 +35,14 @@
         body: JSON.stringify({ text: String(message) }),
       });
 
-      if (!res.ok) throw new Error("TTS HTTP " + res.status);
+      if (!res.ok) {
+        let detail = "HTTP " + res.status;
+        try {
+          const j = await res.json();
+          if (j && j.error) detail = j.error;
+        } catch (e) {}
+        throw new Error(detail);
+      }
 
       const blob = await res.blob();
       if (myId !== playId || !voiceEnabled) return;
@@ -48,6 +55,8 @@
       await audioEl.play();
     } catch (err) {
       console.error("ElevenLabs voice failed, using browser voice:", err);
+      const state = document.getElementById("aiState");
+      if (state) state.textContent = "VOICE ERROR: " + err.message;
       if (myId === playId && voiceEnabled) browserSpeak(message);
     }
   };
