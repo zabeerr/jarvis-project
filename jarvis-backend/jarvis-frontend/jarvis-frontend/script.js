@@ -1,3 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050b18">
+<title>JARVIS | Zabeer</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --blue: #00c8ff;
+  --blue-light: #80e8ff;
+  --bg: #050b18;
+  --glass: rgba(12, 27, 49, 0.78);
+  --border: rgba(0, 200, 255, 0.24);
+}
+
+body {
+  min-height: 100vh;
+  padding: 22px 14px;
+  font-family: Arial, sans-serif;
+  color: #eafaff;
+  background:
+    radial-gradient(ellipse at 50% 18%, #102e50 0%, transparent 42%),
+    radial-gradient(ellipse at 0% 100%, #061d36 0%, transparent 45%),
+    var(--bg);
+  overflow-x: hidden;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 7px;
+  color: white;
+  text-shadow: 0 0 18px var(--blue);
+}
+
+.subtitle {
+  margin-top: 7px;
+  color: #80b8d4;
+  font-size: 10px;
+  letter-spacing: 4px;
+}
+
+.creator {
+  margin-top: 9px;
+  font-size: 10px;
+  color: #6b8ca8;
+  letter-spacing: 1.5px;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0;
+  color: #9ab8ce;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #ffb84d;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.dot.online {
+  background: #00ffae;
+}
+
+.dot.offline {
+  background: #ff5364;
+}
+
+.core-area {
+  height: 205px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 24px;
+}
+
+.core {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(0, 200, 255, 0.8);
+  background:
+    radial-gradient(circle, rgba(0, 200, 255, 0.22), rgba(0, 75, 130, 0.12) 45%, transparent 70%);
+  box-shadow:
+    0 0 22px rgba(0, 200, 255, 0.25),
+    inset 0 0 30px rgba(0, 200, 255, 0.15);
+  animation: pulse 3s infinite ease-in-out;
+}
+
+.core::before,
+.core::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 200, 255, 0.48);
+}
+
+.core::before {
+  inset: -12px;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  animation: rotate 8s linear infinite;
+}
+
+.core::after {
+  inset: 9px;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: rotate 5s linear infinite reverse;
+}
+
+.core-inner {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  border: 2px solid #70e7ff;
+  background: radial-gradient(circle, #24cfff, #00629d 65%, #071a36);
+  box-shadow: 0 0 30px #00aaff, inset 0 0 15px #b8f5ff;
+}
+
+.core.listening {
+  border-color: #00ffae;
+  box-shadow: 0 0 35px rgba(0, 255, 174, 0.5);
+}
+
+.core.listening .core-inner {
+  background: radial-gradient(circle, #9affd7, #00a978 65%, #073b37);
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+
+.panel {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(15px);
+}
+
+.panel-title {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: #72cce8;
+  margin-bottom: 12px;
+}
+
+.reply {
+  min-height: 65px;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #e3f6ff;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ai-state {
+  margin-top: 12px;
+  font-size: 10px;
+  color: #80a9c3;
+  letter-spacing: 1px;
+}
+
+.chat-form {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  color: white;
+  background: rgba(0, 8, 20, 0.7);
+  border: 1px solid rgba(0, 200, 255, 0.3);
+  border-radius: 12px;
+  outline: none;
+  font-size: 14px;
+}
+
+input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.12);
+}
+
+button {
+  cursor: pointer;
+  color: #eafaff;
+  border: 1px solid var(--border);
+  background: rgba(0, 145, 210, 0.12);
+  border-radius: 12px;
+  transition: 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+.send-btn {
+  flex-shrink: 0;
+  width: 50px;
+  font-size: 20px;
+  color: var(--blue-light);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.quick-btn {
+  min-height: 48px;
+  padding: 10px 5px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.quick-btn:hover,
+.quick-btn:focus {
+  background: rgba(0, 160, 230, 0.23);
+  border-color: var(--blue);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.control-btn {
+  padding: 13px 8px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.control-btn.active {
+  color: #00ffae;
+  border-color: #00ffae;
+}
+
+.footer {
+  text-align: center;
+  color: #496d88;
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: 20px;
+}
+
+@media (max-width: 360px) {
+  .logo { font-size: 25px; }
+  .quick-btn { font-size: 10px; }
+  .core-area { height: 180px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo">J.A.R.V.I.S</div>
+    <div class="subtitle">PERSONAL AI ASSISTANT</div>
+    <div class="creator">CREATED BY ZABEER</div>
+  </header>
+
+  <div class="status-bar">
+    <span class="dot" id="statusDot"></span>
+    <span id="onlineStatus">CONNECTING TO AI CORE</span>
+  </div>
+
+  <div class="core-area">
+    <div class="core" id="core">
+      <div class="core-inner"></div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-title">JARVIS RESPONSE</div>
+    <div class="reply" id="reply" aria-live="polite">
+      Hello, Zabeer. Initializing JARVIS systems...
+    </div>
+    <div class="ai-state" id="aiState">SYSTEM INITIALIZING</div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">COMMAND INTERFACE</div>
+
+    <form class="chat-form" id="chatForm">
+      <input
+        type="text"
+        id="cmd"
+        placeholder="Ask JARVIS anything..."
+        autocomplete="off"
+        aria-label="Enter a command"
+      >
+      <button class="send-btn" id="sendBtn" type="submit" aria-label="Send">
+        ➤
+      </button>
+    </form>
+
+    <div class="controls">
+      <button class="control-btn" id="micBtn" type="button">
+        🎙 VOICE INPUT
+      </button>
+      <button class="control-btn" id="voiceBtn" type="button">
+        🔊 VOICE ON
+      </button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">QUICK COMMANDS</div>
+
+    <div class="quick-grid">
+      <button class="quick-btn" data-command="time">◷ TIME</button>
+      <button class="quick-btn" data-command="date">▦ DATE</button>
+      <button class="quick-btn" data-command="status">◉ STATUS</button>
+      <button class="quick-btn" data-command="open google">⌕ GOOGLE</button>
+      <button class="quick-btn" data-command="open youtube">▷ YOUTUBE</button>
+      <button class="quick-btn" data-command="help">? HELP</button>
+    </div>
+  </section>
+
+  <div class="footer">JARVIS AI SYSTEM · ZABEER EDITION</div>
+
+</div>
+
+<script>
 "use strict";
 
 /*
@@ -5,7 +380,7 @@
   Your Gemini API key must remain in Vercel Environment Variables.
   Replace the URL below with your own Vercel link.
 */
-const API_URL = "https://YOUR-PROJECT.vercel.app";
+const API_URL = "https://jarvis-project-jarvis-backend.vercel.app";
 
 const replyEl = document.getElementById("reply");
 const cmdEl = document.getElementById("cmd");
@@ -442,4 +817,6 @@ window.addEventListener("load", function() {
     "Ask me a question to get started."
   );
 });
-                                        
+</script>
+</body>
+</html>
